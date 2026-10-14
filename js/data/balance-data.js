@@ -1,0 +1,1 @@
+window.BALANCE20={combat:{baseDamage:8,levelScaling:.35,bossScaling:3.2},economy:{startingMoney:450,liftCost:10,obdCost:15},loot:{used:42,aftermarket:28,oem:18,performance:9,legendary:3,mythic:0},events:{baseChance:.28,cooldownLevels:3},render:{slowWarningMs:16},save:{schemaVersion:20}};

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Modesto Garažas: Tepalų ir Veržliarakčių Kronikos</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/v20.css">
+<link rel="manifest" href="manifest.json">
+</head>
+<body>
+<a href="#configScreen" style="position:absolute;left:-9999px">Pereiti prie turinio</a>
+
+<!-- NOTIFICATION TOAST -->
+<div id="toast" class="toast"></div>
+
+<div class="wrap">
+  <!-- 1. AUTOMOBILIO KONFIGŪRATORIAUS EKRANAS -->
+  <div id="configScreen" style="display:block;">
+    <div class="hero-banner">
+      <div class="hero-badge">⚡ D&amp;D RPG • LIETUVIŠKO GARAŽO KRONIKOS (100 LYGIŲ)</div>
+      <h1 class="hero-title">🔧 MODESTO MODŽO GARAŽAS</h1>
+      <p class="hero-sub">Išsirink vieną iš 12 automobilių modelių, variklio modifikaciją, kėbulo spalvą ir paruošk automobilį Tuvlitos techninei apžiūrai (100% TA)!</p>
+    </div>
+
+    <div class="card">
+      <div class="sec-lbl">
+        <span>1. PASIRINK AUTOMOBILIO MODELĮ</span>
+        <span>12 Konkrečių Modelių</span>
+      </div>
+      <div id="brandGrid" class="brand-grid"></div>
+
+      <div class="sec-lbl">
+        <span>2. VARIKLIO MODIFIKACIJA (LITRAŽAS, KURAS IR KW)</span>
+        <span>5 Variantai</span>
+      </div>
+      <div id="modList" class="mod-list"></div>
+
+      <div class="cfg-row">
+        <div>
+          <div class="sec-lbl gold-lbl" style="margin-bottom:6px;"><span>3. KĖBULO SPALVA</span></div>
+          <div id="colorRow" class="color-row"></div>
+        </div>
+        <div>
+          <div class="sec-lbl gold-lbl" style="margin-bottom:6px;"><span>4. VALST. NUMERIS</span></div>
+          <div class="lt-plate-inp-wrap">
+            <div class="lt-blue"><span>EU</span><span>LT</span></div>
+            <input id="plateInput" class="lt-inp" type="text" maxlength="7" value="NMP 569" aria-label="Valstybinis numeris">
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-lbl gold-lbl"><span>5. SUDĖTINGUMAS</span><span id="difficultyLabel">🟡 Garažinis</span></div>
+      <div id="difficultyGrid" class="difficulty-grid" aria-label="Sudėtingumo pasirinkimas"></div>
+
+      <!-- STILIZUOTAS AUTOMOBILIO PATEIKIMAS -->
+      <div id="cfgPreview" style="background:rgba(5,8,17,0.88);border:1px solid rgba(56,189,248,0.22);border-radius:14px;padding:14px 12px;text-align:center;margin-bottom:14px;"></div>
+
+      <button type="button" class="btn-start" data-action="start-game">
+        <span class="btn-start-main">🔑 RIEDĖTI PAS MEISTRĄ MODŽO Į GARAŽĄ</span>
+        <span class="btn-start-sub">(PRADĖTI 1 LYGĮ IŠ 100 SU PASIRINKTU VARIKLIU)</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 2. PAGRINDINIS ŽAIDIMO EKRANAS -->
+  <div id="gameScreen" style="display:none;">
+    <div class="top-header">
+      <div class="top-title-bar">
+        <div class="top-brand-title">🔧 MODESTO GARAŽAS • TELEMETRIJA IR DIAGNOSTIKA</div>
+        <div class="top-actions">
+          <button type="button" id="soundBtn" class="btn-icon" data-action="toggle-sound">🔊 Garsas</button>
+          <button type="button" class="btn-icon" data-action="reset-game">🔄 Naujas</button>
+        </div>
+      </div>
+
+      <div class="hud-body">
+        <div class="hud-row1">
+          <div class="plate-car-wrap">
+            <div class="mini-plate"><span>LT</span><span id="hudPlate">NMP 569</span></div>
+            <div id="hudCarName" class="car-title-Top">AUDI Q5 • 2.0 TDI Common-Rail (105 kW)</div>
+          </div>
+          <div id="hudLvl" class="lvl-pill">LYGIS 1 / 100</div>
+        </div>
+
+        <!-- 3 MODELIO LIGOS (25, 60, 95 LYG.) -->
+        <div id="hudIllRow" class="ill-row"></div>
+
+        <!-- 4 PAGRINDINIAI RODIKLIAI -->
+        <div class="hud-grid">
+          <div class="hud-box">
+            <div class="hud-lbl">🔧 TECH. HP</div>
+            <div id="valHp" class="hud-val" style="color:var(--green);">100%</div>
+            <div class="pbar"><div id="barHp" class="pfill" style="width:100%;background:var(--green);"></div></div>
+          </div>
+          <div class="hud-box">
+            <div class="hud-lbl">🧠 NERVAI</div>
+            <div id="valNerves" class="hud-val" style="color:var(--purple-lt);">100%</div>
+            <div class="pbar"><div id="barNerves" class="pfill" style="width:100%;background:var(--purple);"></div></div>
+          </div>
+          <div class="hud-box" style="justify-content: center;">
+            <div class="hud-lbl">💶 BIUDŽETAS</div>
+            <div id="valMoney" class="hud-val" style="color:var(--gold); font-size:14px; margin:4px 0;">505 €</div>
+          </div>
+          <div class="hud-box">
+            <div class="hud-lbl">📈 TA ŠANSAS</div>
+            <div id="valTa" class="hud-val" style="color:var(--cyan-lt);">15 iš 15%</div>
+            <div class="pbar"><div id="barTa" class="pfill" style="width:100%;background:var(--cyan);"></div></div>
+          </div>
+        </div>
+
+        <div class="camp-bar-wrap">
+          <span id="sagaNameLbl">1 Saga: Pirminė Apžiūra ir Perekūpo Paslaptys</span>
+          <div class="camp-track"><div id="barCamp" class="camp-fill" style="width:1%;"></div></div>
+          <span id="campPctLbl">1%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SKIRTUKAS 1: GARAŽAS -->
+    <div id="tabGarage">
+      <div id="liftBanner" class="lift-banner">
+        <span id="liftStatusTxt">⬇️ KELTUVAS NULEISTAS (AUTOMOBILIS ANT ŽEMĖS)</span>
+        <button type="button" id="liftToggleBtn" class="btn-icon" data-action="toggle-lift" style="padding:3px 9px;font-size:10.5px;">🏗️ Pakelti (-10 €)</button>
+      </div>
+
+      <div class="stage-grid">
+        <div id="liftBay" class="lift-bay">
+          <div class="lift-post left"><div class="lift-light"></div></div>
+          <div class="lift-post right"><div class="lift-light"></div></div>
+          <div id="sparkFx" class="spark-fx">⚡🔧✨</div>
+          <div id="stageCarSvg" class="car-svg-wrap"></div>
+        </div>
+
+        <div class="d20-box" data-action="roll-fortune" title="Ridenti D20 Fortūnos kauliuką (1x per lygį)">
+          <div id="d20Die" class="d20-die">20</div>
+          <div id="d20Lbl" class="d20-lbl">🎲 Fortūna (1x/lyg.)</div>
+        </div>
+
+        <div class="mod-box">
+          <div id="modAvatar" class="mod-ava">👨‍🔧</div>
+          <div class="mod-title">Meistras Modestas</div>
+          <div id="modMood" class="mod-mood">Šluosto tepaluotas rankas</div>
+        </div>
+      </div>
+
+      <div id="encounterCard" class="card"></div>
+    </div>
+
+    <!-- SKIRTUKAS 2: OBD2 DIAGNOSTIKA -->
+    <div id="tabObd" style="display:none;"></div>
+
+    <!-- SKIRTUKAS 3: VITALIJAUS ŠROTAS -->
+    <div id="tabShop" style="display:none;"></div>
+
+    <!-- SKIRTUKAS 4: TECHNINIS PASAS -->
+    <div id="tabPass" style="display:none;"></div>
+    <div id="tabRpg" style="display:none;"></div>
+    <div id="tabInventory" style="display:none;"></div>
+  </div>
+</div>
+
+<!-- APATINĖ NAVIGACIJA -->
+<div id="bottomNav" class="bottom-nav" style="display:none;">
+  <button type="button" class="nav-btn active" data-tab="garage">🔧 Garažas</button>
+  <button type="button" class="nav-btn" data-tab="obd">💻 OBD2</button>
+  <button type="button" class="nav-btn" data-tab="shop">🛒 Šrotas</button>
+  <button type="button" class="nav-btn" data-tab="pass">📋 Pasas</button>
+  <button type="button" class="nav-btn" data-tab="rpg">⭐ RPG</button>
+  <button type="button" class="nav-btn" data-tab="inventory">🎒 Daiktai</button>
+</div>
+
+<!-- REMONTO KOVOS IR PATVIRTINIMO MODALINIS LANGAS -->
+<div id="battleResultModal" class="modal-backdrop">
+  <div id="battleModalContent" class="modal-card"></div>
+</div>
+
+<script src="js/core/runtime.js"></script>
+<script src="js/core/random.js"></script>
+<script src="js/core/state.js"></script>
+<script src="js/core/storage.js"></script>
+<script src="js/data/balance-data.js"></script>
+<script src="js/systems/effects.js"></script>
+<script src="js/systems/d20.js"></script>
+<script src="js/systems/validation.js"></script>
+<script src="js/rpg-data.js"></script>
+<script src="js/loot-data.js"></script>
+<script src="js/world-data.js"></script>
+<script src="js/data/modestas-story-data.js"></script>
+<script src="js/game.js"></script>
+<script src="js/ui/dev-panel.js"></script>
+<script>if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js").catch(console.warn));</script>
+</body>
+</html>
